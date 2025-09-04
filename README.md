@@ -195,6 +195,40 @@ GROUP BY Mes;
 1. ¿Cuántas facturas se emitieron por año?  
 2. Agrupa las facturas por mes.  
 
+
+---
+
+## 8️⃣ Funciones de ventana
+
+### 📖 Teoría
+Las funciones de ventana permiten realizar cálculos sobre un conjunto de filas **relacionadas** sin necesidad de agrupar y perder el detalle de cada fila (a diferencia de `GROUP BY`).  
+
+👉 Se definen con la cláusula `OVER()`, que puede incluir:  
+- `PARTITION BY` → divide los datos en grupos.  
+- `ORDER BY` → define un orden dentro del grupo.  
+
+---
+
+### 🔑 Funciones más comunes
+
+- `ROW_NUMBER()` → numera las filas en orden.  
+- `RANK()` → asigna ranking, dejando “saltos” si hay empates.  
+- `DENSE_RANK()` → ranking sin saltos en empates.  
+- `SUM()`, `AVG()`, `COUNT()` → agregaciones como ventana.  
+
+---
+
+### 💻 Ejemplo
+```sql
+--Muestra la suma acumulada de compras por cliente.  
+SELECT CustomerId,
+       Total,
+       SUM(Total) OVER (PARTITION BY CustomerId ORDER BY InvoiceDate) AS Acumulado
+FROM Invoice;
+```
+
+### ❓ Preguntas
+1. Asigna un número de fila (`ROW_NUMBER`) a cada factura.  
 ---
 
 ## 7️⃣ Subconsultas
@@ -219,25 +253,6 @@ WHERE ArtistId IN (
 
 ---
 
-## 8️⃣ Funciones de ventana
-
-### 📖 Teoría
-Permiten cálculos sobre un conjunto de filas relacionadas **sin agrupar**.  
-
-### 💻 Ejemplo
-```sql
-SELECT CustomerId,
-       Total,
-       SUM(Total) OVER (PARTITION BY CustomerId ORDER BY InvoiceDate) AS Acumulado
-FROM Invoice;
-```
-
-### ❓ Preguntas
-1. Muestra la suma acumulada de compras por cliente.  
-2. Asigna un número de fila (`ROW_NUMBER`) a cada factura.  
-
----
-
 ## 9️⃣ JOINs
 
 ### 📖 Teoría
@@ -249,6 +264,7 @@ Sirven para unir tablas:
 
 ### 💻 Ejemplo
 ```sql
+-- Une clientes con sus facturas y muestra el total.
 SELECT c.FirstName, c.LastName, i.Total
 FROM Customer c
 JOIN Invoice i ON c.CustomerId = i.CustomerId
@@ -256,9 +272,8 @@ ORDER BY i.Total DESC
 LIMIT 5;
 ```
 
-### ❓ Preguntas
-1. Une clientes con sus facturas y muestra el total.  
-2. Muestra las canciones junto con el nombre de su álbum y artista.  
+### ❓ Preguntas  
+1. Muestra las canciones junto con el nombre de su álbum y artista.  
 
 ---
 
@@ -266,10 +281,10 @@ LIMIT 5;
 
 ¡Hora del reto final! 🔥  
 
-### ❓ Pregunta
+### ❓ Preguntas
 -  Lista los 3 clientes con mayores compras totales.  
 - ¿Cuáles son los 5 artistas más vendidos en 2010 con ingresos mayores a 20?  
 
 ---
 
-✨ ¡Y listo! Ya tienes tu toolkit de consultas SQL para practicar con Chinook 🚀  
+✨ ¡Y listo! Ya tienes tu toolkit de consultas SQL para practicar con SQL🚀  
