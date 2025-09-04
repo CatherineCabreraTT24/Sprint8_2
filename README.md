@@ -204,6 +204,7 @@ Una consulta dentro de otra. Muy útil para preguntas encadenadas.
 
 ### 💻 Ejemplo
 ```sql
+--Encuentra los artistas que tienen un álbum con “Greatest Hits”.
 SELECT Name
 FROM Artist
 WHERE ArtistId IN (
@@ -213,9 +214,8 @@ WHERE ArtistId IN (
 );
 ```
 
-### ❓ Preguntas
-1. Encuentra los artistas que tienen un álbum con “Greatest Hits”.  
-2. ¿Qué canciones pertenecen a los álbumes del artista “Queen”?  
+### ❓ Preguntas 
+1. ¿Qué canciones pertenecen a los álbumes del artista “Queen”?  
 
 ---
 
