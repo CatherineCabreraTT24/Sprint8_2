@@ -58,7 +58,30 @@ FROM Invoice;
 A veces queremos cambiar el tipo de dato:  
 - **SQLite** → `CAST(expr AS TYPE)`  
 - **PostgreSQL** → `expr::TYPE` o `CAST(expr AS TYPE)`  
-- **MySQL** → `CAST(expr AS TYPE)`  
+- **MySQL** → `CAST(expr AS TYPE)`
+
+# 📊 Tipos de datos comunes en MySQL, PostgreSQL y SQLite
+
+| Categoría      | MySQL                          | PostgreSQL                      | SQLite (tipos de afinidad) |
+|----------------|--------------------------------|----------------------------------|-----------------------------|
+| **Enteros**    | `TINYINT` (1B) <br> `SMALLINT` (2B) <br> `INT` / `INTEGER` (4B) <br> `BIGINT` (8B) | `SMALLINT` (2B) <br> `INTEGER` (4B) <br> `BIGINT` (8B) | `INTEGER` (4 u 8B) <br> `INT` alias |
+| **Decimales / Numéricos** | `DECIMAL(p,s)` / `NUMERIC(p,s)` (precisión exacta) <br> `FLOAT` <br> `DOUBLE` | `NUMERIC(p,s)` (precisión exacta) <br> `REAL` (4B) <br> `DOUBLE PRECISION` (8B) | `REAL` (8B, coma flotante) <br> `NUMERIC` (precisión variable) |
+| **Texto**      | `CHAR(n)` <br> `VARCHAR(n)` <br> `TEXT` | `CHAR(n)` <br> `VARCHAR(n)` <br> `TEXT` | `TEXT` (sin límite) <br> `VARCHAR(n)` (aceptado pero no restringe) |
+| **Booleanos**  | `BOOLEAN` (internamente `TINYINT(1)`) | `BOOLEAN` (TRUE/FALSE) | No existe nativo, usa `INTEGER` (0/1) o `NUMERIC(0/1)` |
+| **Fechas y horas** | `DATE` <br> `DATETIME` <br> `TIMESTAMP` <br> `TIME` <br> `YEAR` | `DATE` <br> `TIME [WITHOUT TIME ZONE]` <br> `TIMESTAMP [WITH TIME ZONE]` <br> `INTERVAL` | `TEXT` (ISO8601) <br> `REAL` (días julianos) <br> `INTEGER` (segundos Unix) |
+| **Binarios**   | `BLOB` <br> `BINARY(n)` <br> `VARBINARY(n)` | `BYTEA` | `BLOB` |
+| **UUID**       | No nativo (se maneja como `CHAR(36)` o `BINARY(16)`) | `UUID` nativo | No nativo (usa `TEXT`) |
+| **JSON**       | `JSON` (validación sintáctica) <br> `JSONB` no soportado | `JSON` (texto validado) <br> `JSONB` (binario, eficiente) | No nativo, se guarda como `TEXT` |
+
+---
+
+## 🔑 Notas importantes
+- **SQLite** solo tiene **5 afinidades de tipo**: `INTEGER`, `REAL`, `TEXT`, `BLOB`, `NUMERIC`. Los demás son *alias*.  
+- **MySQL** usa `TINYINT(1)` como `BOOLEAN`.  
+- **PostgreSQL** es el más estricto y rico: soporta `UUID`, `ARRAY`, `JSONB`, `RANGE TYPES`, etc.  
+- Fechas: SQLite no tiene tipo de fecha/hora nativo, se representa como texto, real o entero.  
+
+
 
 ### 💻 Ejemplo
 ```sql
