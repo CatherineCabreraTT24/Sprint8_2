@@ -104,8 +104,7 @@ LIMIT 5;
 ```
 
 ### ❓ Preguntas
-1. ¿Cuáles son las 5 canciones más largas?  
-2. Lista los 3 clientes con mayores compras totales.  
+1. ¿Cuáles son las 5 canciones más largas?
 
 ---
 
@@ -242,23 +241,8 @@ LIMIT 5;
 
 ¡Hora del reto final! 🔥  
 
-```sql
-SELECT a.Name AS Artista,
-       COUNT(t.TrackId) AS NumCanciones,
-       SUM(il.UnitPrice * il.Quantity) AS IngresosTotales
-FROM InvoiceLine il
-JOIN Track t ON il.TrackId = t.TrackId
-JOIN Album al ON t.AlbumId = al.AlbumId
-JOIN Artist a ON al.ArtistId = a.ArtistId
-JOIN Invoice i ON il.InvoiceId = i.InvoiceId
-WHERE strftime('%Y', i.InvoiceDate) = '2010'
-GROUP BY a.Name
-HAVING IngresosTotales > 20
-ORDER BY IngresosTotales DESC
-LIMIT 5;
-```
-
 ### ❓ Pregunta
+-  Lista los 3 clientes con mayores compras totales.  
 - ¿Cuáles son los 5 artistas más vendidos en 2010 con ingresos mayores a 20?  
 
 ---
