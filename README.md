@@ -11,16 +11,20 @@ Piensa en **Chinook** como una tienda de música tipo *iTunes* o *Spotify viejo*
 
 Imagina SQL como una receta de cocina 👩‍🍳: primero eliges los ingredientes, luego los filtras, después agrupas y al final los sirves.  
 
-| Paso | Palabra clave | ¿Qué hace? |
-|------|---------------|------------|
-| 1    | `FROM` / `JOIN` | Tablas de origen 🍽️ |
-| 2    | `WHERE` | Filtrar filas antes de agrupar 🚪 |
-| 3    | `GROUP BY` | Agrupar en categorías 🗂️ |
-| 4    | `HAVING` | Filtrar grupos ya agregados 🧐 |
-| 5    | `SELECT` | Elegir qué columnas mostrar 🖼️ |
-| 6    | `DISTINCT` | Quitar duplicados ✨ |
-| 7    | `ORDER BY` | Ordenar resultados 📊 |
-| 8    | `LIMIT / OFFSET` | Limitar filas devueltas ⏳ |
+| Cláusula            | Función                                                                      |
+| ------------------- | ---------------------------------------------------------------------------- |
+| `WITH`              | Define CTEs para organizar subconsultas reutilizables.    OPCIONAL           |
+| `SELECT [DISTINCT] [COUNT] [AGG_FUNCTIONS]` | Elige columnas/expresiones. `DISTINCT` elimina duplicados del **resultado**. `COUNT` Cuenta los valores del resultado. `AFF_FUNCTIONS` Son una serie de funciones para hacer cálculos (se explican más abajo)  |
+| `FROM`              | Tabla (o subconsulta) base.                                                  |
+| `JOIN ... ON ...`   | Une tablas relacionadas (uno o varios `JOIN`).                               |
+| `WHERE`             | Filtra **filas** antes de agrupar. No ve alias del `SELECT`.                 |
+| `GROUP BY`          | Agrupa para aplicar agregaciones (`SUM`, `AVG`, ...).                        |
+| `HAVING`            | Filtra **grupos** ya agregados.                                              |
+| `WINDOW`            | Define ventanas con nombre para funciones de ventana.                        |
+| `ORDER BY`          | Ordena el conjunto final (sí puede usar alias del `SELECT`).                 |
+| `LIMIT`             | Número máximo de filas a devolver.                                           |
+| `OFFSET`            | Salta las primeras `m` filas del resultado.                                  |
+
 
 ---
 
