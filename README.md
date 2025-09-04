@@ -20,7 +20,6 @@ Imagina SQL como una receta de cocina 👩‍🍳: primero eliges los ingredient
 | `WHERE`             | Filtra **filas** antes de agrupar. No ve alias del `SELECT`.                 |
 | `GROUP BY`          | Agrupa para aplicar agregaciones (`SUM`, `AVG`, ...).                        |
 | `HAVING`            | Filtra **grupos** ya agregados.                                              |
-| `WINDOW`            | Define ventanas con nombre para funciones de ventana.                        |
 | `ORDER BY`          | Ordena el conjunto final (sí puede usar alias del `SELECT`).                 |
 | `LIMIT`             | Número máximo de filas a devolver.                                           |
 | `OFFSET`            | Salta las primeras `m` filas del resultado.                                  |
