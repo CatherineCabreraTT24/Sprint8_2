@@ -89,25 +89,6 @@ LIMIT 5;
 1. Convierte la columna `Milliseconds` de la tabla `Track` a minutos enteros.   
 
 ---
-
-## 3️⃣ GROUP BY
-
-### 📖 Teoría
-Agrupa filas según una o más columnas. Ideal para **resúmenes**.  
-
-### 💻 Ejemplo
-```sql
-SELECT BillingCountry, COUNT(*) AS NumFacturas
-FROM Invoice
-GROUP BY BillingCountry;
-```
-
-### ❓ Preguntas
-1. Muestra cuántas facturas se hicieron por cada país.  
-2. Agrupa las ventas por país y año de la factura.  
-
----
-
 ## 4️⃣ ORDER BY y LIMIT
 
 ### 📖 Teoría
@@ -125,6 +106,24 @@ LIMIT 5;
 ### ❓ Preguntas
 1. ¿Cuáles son las 5 canciones más largas?  
 2. Lista los 3 clientes con mayores compras totales.  
+
+---
+
+## 3️⃣ GROUP BY
+
+### 📖 Teoría
+Agrupa filas según una o más columnas. Ideal para **resúmenes**.  
+
+### 💻 Ejemplo
+```sql
+SELECT BillingCountry, COUNT(*) AS NumFacturas
+FROM Invoice
+GROUP BY BillingCountry;
+```
+
+### ❓ Preguntas
+1. ¿Cuál es el "gasto total" (aquí representado con la suma de CustomerId) agrupado por ciudad y nombre del cliente, y quiénes aparecen con los valores más altos?
+2. Agrupa las ventas por país y año de la factura, ordenado del año más antiguo al más reciente y por ciudad alfabéticamente.  
 
 ---
 
