@@ -1,4 +1,4 @@
-# 🎶 Clase de SQL con Chinook
+# 🎶 SQL - Todo lo que necesitas saber
 
 Bienvenidos a esta clase de **SQL (2 horas)** usando la base de datos **Chinook** 🎧  
 Piensa en **Chinook** como una tienda de música tipo *iTunes* o *Spotify viejo*:  
