@@ -147,7 +147,7 @@ HAVING COUNT(*) > 10;
 ```
 
 ### ❓ Preguntas
-1. ¿Qué países tienen más de 10 facturas?  
+1. ¿Cuántos clientes hay en cada ciudad?
 2. Encuentra las facturas mayores a 15 en USA.  
 
 ---
