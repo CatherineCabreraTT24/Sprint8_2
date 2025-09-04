@@ -155,15 +155,40 @@ HAVING COUNT(*) > 10;
 ## 6️⃣ Fechas: EXTRACT y DATE_TRUNC
 
 ### 📖 Teoría
-- **SQLite** → `strftime`  
-- **PostgreSQL** → `EXTRACT` y `DATE_TRUNC`  
 
-### 💻 Ejemplo
+El manejo de fechas depende del motor de base de datos.  
+En este curso veremos **SQLite** y **PostgreSQL**.
+
+---
+
+### 🟦 SQLite → `strftime`
+
+- No tiene tipo de fecha/hora nativo.  
+- Se usa `strftime(format, fecha)` para extraer partes.
+📌 Formatos comunes:
+%Y = Año, %m = Mes, %d = Día, %H = Hora, %M = Minuto
+
 ```sql
--- Año de cada factura en SQLite
-SELECT strftime('%Y', InvoiceDate) AS Anio, COUNT(*)
+-- Año de la factura
+SELECT strftime('%Y', InvoiceDate) AS Anio, COUNT(*) 
 FROM Invoice
 GROUP BY Anio;
+```
+### 🟪 PostgreSQL → EXTRACT y DATE_TRUNC
+- Maneja DATE/TIMESTAMP nativos.
+   - EXTRACT devuelve valores numéricos.
+   - DATE_TRUNC “recorta” fechas a año, mes, etc.
+
+ ```sql
+-- Año de la factura
+SELECT EXTRACT(YEAR FROM InvoiceDate) AS Anio, COUNT(*) 
+FROM Invoice
+GROUP BY Anio;
+
+-- Truncar a mes
+SELECT DATE_TRUNC('month', InvoiceDate) AS Mes, COUNT(*) 
+FROM Invoice
+GROUP BY Mes;
 ```
 
 ### ❓ Preguntas
