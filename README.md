@@ -104,7 +104,7 @@ LIMIT 5;
 ```
 
 ### ❓ Preguntas
-1. ¿Cuáles son las 5 canciones más largas?
+1. ¿Cuáles son las 5 canciones más largas del compositor 'Jerry Cantrell'?
 
 ---
 
