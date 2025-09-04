@@ -86,8 +86,7 @@ LIMIT 5;
 ```
 
 ### ❓ Preguntas
-1. Convierte la columna `Milliseconds` de la tabla `Track` a minutos enteros.  
-2. ¿Qué diferencia hay entre `CAST` en SQLite y `::` en PostgreSQL?  
+1. Convierte la columna `Milliseconds` de la tabla `Track` a minutos enteros.   
 
 ---
 
