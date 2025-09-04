@@ -60,9 +60,7 @@ A veces queremos cambiar el tipo de dato:
 - **PostgreSQL** → `expr::TYPE` o `CAST(expr AS TYPE)`  
 - **MySQL** → `CAST(expr AS TYPE)`
 
-# 📊 Tipos de datos comunes en MySQL, PostgreSQL y SQLite
-
-# 📊 Tipos de datos básicos en SQL
+#### 📊 Tipos de datos comunes en MySQL, PostgreSQL y SQLite
 
 | Categoría   | MySQL              | PostgreSQL        | SQLite (afinidades) |
 |-------------|--------------------|-------------------|----------------------|
