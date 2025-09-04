@@ -1,6 +1,6 @@
 # 🎶 SQL - Todo lo que necesitas saber
 
-Bienvenidos a esta clase de **SQL (2 horas)** usando la base de datos **Chinook** 🎧  
+El día de hoy practicaremos SQL usando la base de datos **Chinook** 🎧  
 Piensa en **Chinook** como una tienda de música tipo *iTunes* o *Spotify viejo*:  
 - Tiene **clientes**, **facturas**, **álbumes**, **artistas**, **canciones** 🎵  
 - Perfecta para aprender a consultar datos con SQL 🚀  
