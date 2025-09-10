@@ -46,9 +46,7 @@ FROM Invoice;
 ```
 
 ### ❓ Preguntas
-1. ¿Cuántos clientes existen en la tabla `Customer`?  
-2. ¿Cuál es el valor total de todas las facturas?  
-3. ¿Cuál es la duración promedio de las canciones (`Milliseconds`) en minutos?  
+3. ¿Cuál es la duración promedio de las canciones (`Milliseconds`) en minutos (un minuto son 6000 milisegundos)?  
 
 ---
 
@@ -84,10 +82,6 @@ SELECT Total,
 FROM Invoice
 LIMIT 5;
 ```
-
-### ❓ Preguntas
-1. Convierte la columna `Milliseconds` de la tabla `Track` a minutos enteros.   
-
 ---
 ## 4️⃣ ORDER BY y LIMIT
 
@@ -122,7 +116,6 @@ GROUP BY BillingCountry;
 
 ### ❓ Preguntas
 1. ¿Cuál es el "gasto total" (aquí representado con la suma de CustomerId) agrupado por ciudad y nombre del cliente, y quiénes aparecen con los valores más altos?
-2. Agrupa las ventas por país y año de la factura, ordenado del año más antiguo al más reciente y por ciudad alfabéticamente.  
 
 ---
 
@@ -147,8 +140,7 @@ HAVING COUNT(*) > 10;
 ```
 
 ### ❓ Preguntas
-1. ¿Cuántos clientes hay en cada ciudad?
-2. Encuentra las facturas mayores a 15 en USA.  
+1. ¿Cuántos clientes hay en cada ciudad? 
 
 ---
 
