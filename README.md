@@ -200,27 +200,17 @@ Las funciones de ventana permiten realizar cálculos sobre un conjunto de filas 
 - `ORDER BY` → define un orden dentro del grupo.  
 
 ---
-
-### 🔑 Funciones más comunes
-
-- `ROW_NUMBER()` → numera las filas en orden.  
-- `RANK()` → asigna ranking, dejando “saltos” si hay empates.  
-- `DENSE_RANK()` → ranking sin saltos en empates.  
-- `SUM()`, `AVG()`, `COUNT()` → agregaciones como ventana.  
-
----
-
-### 💻 Ejemplo
-```sql
---Muestra la suma acumulada de compras por cliente.  
-SELECT CustomerId,
-       Total,
-       SUM(Total) OVER (PARTITION BY CustomerId ORDER BY InvoiceDate) AS Acumulado
-FROM Invoice;
-```
-
-### ❓ Preguntas
-1. Asigna un número de fila (`ROW_NUMBER`) a cada factura.  
+-- Muestra la suma acumulada y el porcentaje del total de compras por cliente
+SELECT 
+    CustomerId,
+    InvoiceId,
+    Total,
+    SUM(Total) OVER (PARTITION BY CustomerId ORDER BY InvoiceDate) AS Acumulado,
+    -- Porcentaje del total de compras de cada cliente
+    100.0 * SUM(Total) OVER (PARTITION BY CustomerId ORDER BY InvoiceDate)
+           / SUM(Total) OVER (PARTITION BY CustomerId) AS PorcentajeDelTotal
+FROM Invoice
+ORDER BY PorcentajeDelTotal; 
 ---
 
 ## 7️⃣ Subconsultas
