@@ -199,7 +199,7 @@ Las funciones de ventana permiten realizar cálculos sobre un conjunto de filas 
 - `PARTITION BY` → divide los datos en grupos.  
 - `ORDER BY` → define un orden dentro del grupo.  
 
----
+```sql
 -- Muestra la suma acumulada y el porcentaje del total de compras por cliente
 SELECT 
     CustomerId,
@@ -211,7 +211,7 @@ SELECT
            / SUM(Total) OVER (PARTITION BY CustomerId) AS PorcentajeDelTotal
 FROM Invoice
 ORDER BY PorcentajeDelTotal; 
----
+```
 
 ## 7️⃣ Subconsultas
 
