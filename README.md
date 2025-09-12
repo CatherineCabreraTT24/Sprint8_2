@@ -264,8 +264,8 @@ LIMIT 5;
 ¡Hora del reto final! 🔥  
 
 ### ❓ Preguntas
--  Lista los 3 clientes con mayores compras totales.  
-- ¿Cuáles son los 5 artistas más vendidos en 2010 con ingresos mayores a 20?  
+- ¿Cuáles son los clientes que más han gastado, y cuál es su ranking dentro de cada país?
+- ¿Qué álbumes tienen un precio promedio de pista mayor que el promedio general?
 
 ---
 
