@@ -46,7 +46,7 @@ FROM Invoice;
 ```
 
 ### ❓ Preguntas
-3. ¿Cuál es la duración promedio de las canciones (`Milliseconds`) en minutos (un minuto son 6000 milisegundos)?  
+1. ¿Cuál es la duración promedio de las canciones (`Milliseconds`) en minutos (un minuto son 60000 milisegundos)?  
 
 ---
 
@@ -115,7 +115,7 @@ GROUP BY BillingCountry;
 ```
 
 ### ❓ Preguntas
-1. ¿Cuál es el "gasto total" (aquí representado con la suma de CustomerId) agrupado por ciudad y nombre del cliente, y quiénes aparecen con los valores más altos?
+1. ¿Cuantos clientes hay por ciudad? Ordenar de mayor a menor
 
 ---
 
