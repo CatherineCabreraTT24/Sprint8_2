@@ -187,8 +187,16 @@ GROUP BY Mes;
 1. ¿Cuántas facturas se emitieron por año?  
 2. Agrupa las facturas por mes.  
 
-
 ---
+## RETO FINAL DE LA PRIMERA PARTE:
+- Muestra las facturas cuyo total sea mayor a 10.
+- Lista los clientes que sean de Canada o USA.
+- Géneros con duración promedio mayor a 4 minutos.
+- Países cuya venta total supere 100.
+- Top 3 clientes que más han comprado (por número de facturas).
+- Top 5 canciones más largas.
+- ¿Cuál es el país con mayor venta total? (solo 1 resultado).
+
 
 ## 8️⃣ Funciones de ventana
 
