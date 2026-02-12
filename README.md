@@ -342,9 +342,12 @@ FROM paso2;
 ¡Hora del reto final! 🔥  
 
 ### ❓ Preguntas
-- ¿Cuáles son los clientes que más han gastado, y cuál es su ranking dentro de cada país?
-- ¿Qué álbumes tienen un precio promedio de pista mayor que el promedio general?
-- El área de producto quiere evaluar si ciertos álbumes están posicionados como “premium”. Necesitan identificar cuáles álbumes tienen un precio promedio por canción superior al promedio general de toda la tienda.
+- Identificar cuáles son los clientes que más han gastado históricamente y determinar su ranking dentro de cada país.
+- Detectar qué álbumes tienen un precio promedio por canción superior al promedio general de toda la tienda.
+- Determinar qué álbumes pueden considerarse “premium” al tener un precio promedio por pista mayor que el promedio global y calcular la diferencia frente a ese promedio.
+- Identificar clientes cuya segunda compra haya sido al menos 30% menor que su primera compra, para detectar posibles señales tempranas de desinterés.
+- Obtener el Top 3 de canciones con mayores ingresos generados en cada país, incluyendo su ranking dentro del país.
+- Determinar qué clientes conforman el grupo que acumula aproximadamente el 80% de los ingresos dentro de cada país, para evaluar concentración y riesgo financiero.
 
 ---
 
