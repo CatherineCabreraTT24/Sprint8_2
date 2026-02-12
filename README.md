@@ -140,7 +140,33 @@ HAVING COUNT(*) > 10;
 ```
 
 ### ❓ Preguntas
-1. ¿Cuántos clientes hay en cada ciudad? 
+1. ¿Cuántos clientes hay en cada ciudad?
+
+---
+
+## 9️⃣ JOINs
+
+### 📖 Teoría
+Sirven para unir tablas:  
+- `INNER JOIN` → solo coincidencias  
+- `LEFT JOIN` → todo lo de la izquierda + coincidencias  
+- `RIGHT JOIN` → todo lo de la derecha + coincidencias (no en SQLite)  
+- `FULL JOIN` → todo (no directo en SQLite)  
+
+### 💻 Ejemplo
+```sql
+-- Une clientes con sus facturas y muestra el total.
+SELECT c.FirstName, c.LastName, i.Total
+FROM Customer c
+JOIN Invoice i ON c.CustomerId = i.CustomerId
+ORDER BY i.Total DESC
+LIMIT 5;
+```
+
+### ❓ Preguntas  
+1. Muestra las canciones junto con el nombre de su álbum y artista.  
+
+---
 
 ---
 ## RETO FINAL DE LA PRIMERA PARTE:
@@ -192,9 +218,39 @@ GROUP BY Mes;
 ```
 
 ### ❓ Preguntas
-1. ¿Cuántas facturas se emitieron por año?  
-2. Agrupa las facturas por mes.  
+1. Agrupa las facturas por mes.
 
+---
+### 🔀 CASE en SQL
+
+La sentencia CASE permite agregar lógica condicional dentro de una consulta SQL.
+Es equivalente a un if / else en programación.
+
+### Estructura básica
+```sql
+CASE
+    WHEN condición THEN resultado
+    WHEN condición THEN resultado
+    ELSE resultado
+END
+```
+
+### Ejemplo: 
+```sql
+SELECT
+    InvoiceId,
+    Total,
+    CASE
+        WHEN Total >= 15 THEN 'Alto'
+        WHEN Total >= 5 THEN 'Medio'
+        ELSE 'Bajo'
+    END AS NivelDeCompra
+FROM Invoice;
+
+```
+
+### ❓ Preguntas
+1. El equipo comercial quiere entender mejor el comportamiento de compra. Necesitan que clasifiques cada factura como “Alta”, “Media” o “Baja” dependiendo del monto pagado, para luego analizar qué tipo de ventas predominan en el negocio.
 
 ## 8️⃣ Funciones de ventana
 
@@ -204,6 +260,23 @@ Las funciones de ventana permiten realizar cálculos sobre un conjunto de filas 
 👉 Se definen con la cláusula `OVER()`, que puede incluir:  
 - `PARTITION BY` → divide los datos en grupos.  
 - `ORDER BY` → define un orden dentro del grupo.  
+
+| Categoría                  | Función                | ¿Qué hace?                             | ¿Cuándo usarla?                                    | Ejemplo                                                              |
+| -------------------------- | ---------------------- | -------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------- |
+| **Ranking**                | `ROW_NUMBER()`         | Asigna un número único secuencial      | Cuando no quieres empates                          | `ROW_NUMBER() OVER (ORDER BY Total DESC)`                            |
+|                            | `RANK()`               | Ranking con empates (salta posiciones) | Cuando los empates deben reflejar competencia real | `RANK() OVER (ORDER BY Total DESC)`                                  |
+|                            | `DENSE_RANK()`         | Ranking con empates (sin saltos)       | Cuando quieres ranking compacto                    | `DENSE_RANK() OVER (ORDER BY Total DESC)`                            |
+| **Agregación**             | `SUM()`                | Suma dentro de la ventana              | Totales por grupo sin colapsar filas               | `SUM(Total) OVER (PARTITION BY Country)`                             |
+|                            | `AVG()`                | Promedio dentro de la ventana          | Comparar con promedio del grupo                    | `AVG(Total) OVER (PARTITION BY Country)`                             |
+|                            | `COUNT()`              | Conteo dentro de la ventana            | Contar filas por grupo                             | `COUNT(*) OVER (PARTITION BY Country)`                               |
+|                            | `MIN()` / `MAX()`      | Valor mínimo o máximo del grupo        | Detectar extremos dentro del grupo                 | `MAX(Total) OVER (PARTITION BY Country)`                             |
+| **Acumulado**              | `SUM()` con `ORDER BY` | Suma acumulada progresiva              | Running totals                                     | `SUM(Total) OVER (PARTITION BY CustomerId ORDER BY InvoiceDate)`     |
+| **Navegación**             | `LAG()`                | Accede a la fila anterior              | Comparaciones temporales                           | `LAG(Total) OVER (ORDER BY InvoiceDate)`                             |
+|                            | `LEAD()`               | Accede a la fila siguiente             | Comparaciones futuras                              | `LEAD(Total) OVER (ORDER BY InvoiceDate)`                            |
+| **Distribución**           | `NTILE(n)`             | Divide en n grupos                     | Cuartiles / percentiles simples                    | `NTILE(4) OVER (ORDER BY Total DESC)`                                |
+| **Valor dentro del grupo** | `FIRST_VALUE()`        | Primer valor de la ventana             | Obtener el mayor o menor dentro del grupo          | `FIRST_VALUE(Total) OVER (PARTITION BY Country ORDER BY Total DESC)` |
+|                            | `LAST_VALUE()`         | Último valor de la ventana             | Comparar contra el menor del grupo                 | `LAST_VALUE(Total) OVER (PARTITION BY Country ORDER BY Total)`       |
+
 
 ```sql
 -- Muestra la suma acumulada y el porcentaje del total de compras por cliente
@@ -216,53 +289,52 @@ SELECT
     100.0 * SUM(Total) OVER (PARTITION BY CustomerId ORDER BY InvoiceDate)
            / SUM(Total) OVER (PARTITION BY CustomerId) AS PorcentajeDelTotal
 FROM Invoice
-ORDER BY PorcentajeDelTotal; 
+ORDER BY PorcentajeDelTotal;
 ```
+### ❓ Preguntas 
+1. El área de retención quiere saber si los clientes están aumentando o disminuyendo su gasto con el tiempo. Para cada compra de un cliente, necesitan ver cuánto gastó en su compra anterior y determinar si su consumo está subiendo, bajando o manteniéndose estable.
 
-## 7️⃣ Subconsultas
+
+## 7️⃣ Subconsultas - CTE
 
 ### 📖 Teoría
-Una consulta dentro de otra. Muy útil para preguntas encadenadas.  
+Una CTE es una consulta temporal que se define antes del SELECT principal usando la palabra clave WITH.
 
-### 💻 Ejemplo
+Permite dividir una consulta compleja en pasos más claros y legibles.
+
+### Estructura
 ```sql
---Encuentra los artistas que tienen un álbum con “Greatest Hits”.
-SELECT Name
-FROM Artist
-WHERE ArtistId IN (
-    SELECT ArtistId
-    FROM Album
-    WHERE Title LIKE '%Greatest Hits%'
-);
+WITH nombre_cte AS (
+    SELECT ...
+)
+SELECT ...
+FROM nombre_cte;
 ```
 
+### 💻 Ejemplo simple
+```sql
+WITH total_por_cliente AS (
+    SELECT
+        CustomerId,
+        SUM(Total) AS TotalSpent
+    FROM Invoice
+    GROUP BY CustomerId
+)
+
+SELECT *
+FROM total_por_cliente
+ORDER BY TotalSpent DESC;
+```
+
+### 💻 Ejemplo encadenado
+```sql
+WITH paso1 AS (...),
+     paso2 AS (...)
+SELECT ...
+FROM paso2;
+```
 ### ❓ Preguntas 
 1. ¿Qué canciones pertenecen a los álbumes del artista “Queen”?  
-
----
-
-## 9️⃣ JOINs
-
-### 📖 Teoría
-Sirven para unir tablas:  
-- `INNER JOIN` → solo coincidencias  
-- `LEFT JOIN` → todo lo de la izquierda + coincidencias  
-- `RIGHT JOIN` → todo lo de la derecha + coincidencias (no en SQLite)  
-- `FULL JOIN` → todo (no directo en SQLite)  
-
-### 💻 Ejemplo
-```sql
--- Une clientes con sus facturas y muestra el total.
-SELECT c.FirstName, c.LastName, i.Total
-FROM Customer c
-JOIN Invoice i ON c.CustomerId = i.CustomerId
-ORDER BY i.Total DESC
-LIMIT 5;
-```
-
-### ❓ Preguntas  
-1. Muestra las canciones junto con el nombre de su álbum y artista.  
-
 ---
 
 ## 🏁 Ejercicio Final
@@ -272,6 +344,7 @@ LIMIT 5;
 ### ❓ Preguntas
 - ¿Cuáles son los clientes que más han gastado, y cuál es su ranking dentro de cada país?
 - ¿Qué álbumes tienen un precio promedio de pista mayor que el promedio general?
+- El área de producto quiere evaluar si ciertos álbumes están posicionados como “premium”. Necesitan identificar cuáles álbumes tienen un precio promedio por canción superior al promedio general de toda la tienda.
 
 ---
 
