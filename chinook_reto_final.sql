@@ -143,63 +143,48 @@ ORDER BY BillingCountry, Ranking;
 -- 6) Determinar qué clientes conforman el grupo que acumula ~80% de los ingresos
 --    dentro de cada país (concentración tipo Pareto).
 --    Incluye el cliente que cruza el umbral del 80%.
---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------- 
+
 WITH customer_spend AS (
-    SELECT
-        i.BillingCountry AS country,
-        c.CustomerId AS customer_id,
-        c.FirstName || ' ' || c.LastName AS customer_name,
-        SUM(i.Total) AS total_spent
-    FROM Invoice i
-    JOIN Customer c
-      ON c.CustomerId = i.CustomerId
+    SELECT 
+        i.BillingCountry,
+        c.CustomerId,
+        c.FirstName || ' ' || c.LastName AS CustomerName,
+        SUM(i.Total) AS TotalSpent
+    FROM Customer c
+    JOIN Invoice i 
+        ON c.CustomerId = i.CustomerId
     GROUP BY i.BillingCountry, c.CustomerId
 ),
-country_totals AS (
-    SELECT country, SUM(total_spent) AS country_total
+
+cumulative AS (
+    SELECT
+        BillingCountry,
+        CustomerId,
+        CustomerName,
+        TotalSpent,
+        
+        -- acumulado por país
+        SUM(TotalSpent) OVER (
+            PARTITION BY BillingCountry
+            ORDER BY TotalSpent DESC
+        ) AS CumulativeRevenue,
+        
+        -- total país
+        SUM(TotalSpent) OVER (
+            PARTITION BY BillingCountry
+        ) AS CountryTotal
     FROM customer_spend
-    GROUP BY country
-),
-ranked AS (
-    SELECT
-        cs.country,
-        cs.customer_id,
-        cs.customer_name,
-        cs.total_spent,
-        ct.country_total,
-        SUM(cs.total_spent) OVER (
-            PARTITION BY cs.country
-            ORDER BY cs.total_spent DESC, cs.customer_id
-            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-        ) AS cum_spent
-    FROM customer_spend cs
-    JOIN country_totals ct
-      ON ct.country = cs.country
-),
-with_pct AS (
-    SELECT
-        country,
-        customer_id,
-        customer_name,
-        total_spent,
-        country_total,
-        cum_spent,
-        (cum_spent * 1.0 / country_total) AS cum_pct,
-        LAG(cum_spent * 1.0 / country_total) OVER (
-            PARTITION BY country
-            ORDER BY total_spent DESC, customer_id
-        ) AS prev_cum_pct
-    FROM ranked
 )
+
 SELECT
-    country,
-    customer_id,
-    customer_name,
-    total_spent,
-    country_total,
-    cum_spent,
-    ROUND(cum_pct, 4) AS cumulative_pct_of_country_revenue
-FROM with_pct
-WHERE cum_pct <= 0.80
-   OR (prev_cum_pct < 0.80 AND cum_pct > 0.80)
-ORDER BY country, total_spent DESC, customer_name;
+    BillingCountry,
+    CustomerId,
+    CustomerName,
+    TotalSpent,
+    CumulativeRevenue,
+    ROUND(CumulativeRevenue * 1.0 / CountryTotal, 4) AS CumulativePercentage
+FROM cumulative
+WHERE (CumulativeRevenue * 1.0 / CountryTotal) <= 0.8
+ORDER BY BillingCountry, TotalSpent DESC;
+
