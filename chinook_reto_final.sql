@@ -35,142 +35,109 @@ ORDER BY country, spend_rank_in_country, customer_name;
 --    al promedio general de toda la tienda (catálogo).
 --    (Promedio por canción = AVG(Track.UnitPrice) dentro del álbum)
 --------------------------------------------------------------------------------
-WITH global_avg AS (
-    SELECT AVG(UnitPrice) AS avg_unit_price_global
-    FROM Track
-),
-album_avg AS (
-    SELECT
-        a.AlbumId   AS album_id,
-        a.Title     AS album_title,
-        AVG(t.UnitPrice) AS avg_unit_price_album,
-        COUNT(*)    AS track_count
-    FROM Album a
-    JOIN Track t
-      ON t.AlbumId = a.AlbumId
-    GROUP BY a.AlbumId, a.Title
-)
-SELECT
-    aa.album_id,
-    aa.album_title,
-    aa.track_count,
-    aa.avg_unit_price_album,
-    ga.avg_unit_price_global
-FROM album_avg aa
-CROSS JOIN global_avg ga
-WHERE aa.avg_unit_price_album > ga.avg_unit_price_global
-ORDER BY (aa.avg_unit_price_album - ga.avg_unit_price_global) DESC, aa.album_title;
+SELECT 
+    a.AlbumId,
+    a.Title,
+    AVG(t.UnitPrice) AS AlbumAvgPrice
+FROM Album a
+JOIN Track t 
+    ON a.AlbumId = t.AlbumId
+GROUP BY a.AlbumId
+HAVING AVG(t.UnitPrice) > (
+    SELECT AVG(UnitPrice) FROM Track
+);
 
 --------------------------------------------------------------------------------
 -- 3) Determinar qué álbumes pueden considerarse “premium” al tener un precio
 --    promedio por pista mayor que el promedio global y calcular la diferencia.
 --------------------------------------------------------------------------------
-WITH global_avg AS (
-    SELECT AVG(UnitPrice) AS avg_unit_price_global
-    FROM Track
-),
-album_avg AS (
-    SELECT
-        a.AlbumId   AS album_id,
-        a.Title     AS album_title,
-        AVG(t.UnitPrice) AS avg_unit_price_album,
-        COUNT(*)    AS track_count
-    FROM Album a
-    JOIN Track t
-      ON t.AlbumId = a.AlbumId
-    GROUP BY a.AlbumId, a.Title
-)
-SELECT
-    aa.album_id,
-    aa.album_title,
-    aa.track_count,
-    aa.avg_unit_price_album,
-    ga.avg_unit_price_global,
-    (aa.avg_unit_price_album - ga.avg_unit_price_global) AS premium_delta
-FROM album_avg aa
-CROSS JOIN global_avg ga
-WHERE aa.avg_unit_price_album > ga.avg_unit_price_global
-ORDER BY premium_delta DESC, aa.album_title;
-
+SELECT 
+    a.AlbumId,
+    a.Title,
+    AVG(t.UnitPrice) AS AlbumAvgPrice
+FROM Album a
+JOIN Track t 
+    ON a.AlbumId = t.AlbumId
+GROUP BY a.AlbumId
+HAVING AVG(t.UnitPrice) > (
+    SELECT AVG(UnitPrice) FROM Track
+);
 --------------------------------------------------------------------------------
 -- 4) Identificar clientes cuya segunda compra haya sido al menos 30% menor que
 --    su primera compra (segunda <= 70% de la primera).
 --------------------------------------------------------------------------------
+-- Clientes cuya segunda compra fue al menos 30% menor que la primera
+
 WITH ordered_invoices AS (
     SELECT
-        i.CustomerId,
-        i.InvoiceId,
-        i.InvoiceDate,
-        i.Total,
+        CustomerId,
+        InvoiceDate,
+        Total,
         ROW_NUMBER() OVER (
-            PARTITION BY i.CustomerId
-            ORDER BY i.InvoiceDate, i.InvoiceId
+            PARTITION BY CustomerId
+            ORDER BY InvoiceDate
         ) AS rn
-    FROM Invoice i
+    FROM Invoice
 ),
+
 first_second AS (
     SELECT
         CustomerId,
-        MAX(CASE WHEN rn = 1 THEN Total END) AS first_purchase_total,
-        MAX(CASE WHEN rn = 2 THEN Total END) AS second_purchase_total
+        MAX(CASE WHEN rn = 1 THEN Total END) AS first_purchase,
+        MAX(CASE WHEN rn = 2 THEN Total END) AS second_purchase
     FROM ordered_invoices
-    WHERE rn IN (1,2)
+    WHERE rn IN (1, 2)
     GROUP BY CustomerId
 )
+
 SELECT
-    c.CustomerId AS customer_id,
-    c.FirstName || ' ' || c.LastName AS customer_name,
-    c.Country AS customer_country,
-    fs.first_purchase_total,
-    fs.second_purchase_total,
-    ROUND((fs.second_purchase_total / fs.first_purchase_total) - 1.0, 4) AS pct_change_second_vs_first
+    c.CustomerId,
+    c.FirstName || ' ' || c.LastName AS CustomerName,
+    fs.first_purchase,
+    fs.second_purchase
 FROM first_second fs
-JOIN Customer c
-  ON c.CustomerId = fs.CustomerId
-WHERE fs.first_purchase_total IS NOT NULL
-  AND fs.second_purchase_total IS NOT NULL
-  AND fs.second_purchase_total <= fs.first_purchase_total * 0.70
-ORDER BY pct_change_second_vs_first ASC, customer_name;
+JOIN Customer c 
+    ON c.CustomerId = fs.CustomerId
+WHERE fs.second_purchase <= fs.first_purchase * 0.7;
 
 --------------------------------------------------------------------------------
 -- 5) Obtener el Top 3 de canciones con mayores ingresos generados en cada país,
 --    incluyendo su ranking dentro del país.
 --    (Ingresos = SUM(InvoiceLine.UnitPrice * Quantity))
 --------------------------------------------------------------------------------
+-- Top 3 canciones con mayores ingresos en cada país
+
 WITH track_revenue AS (
-    SELECT
-        i.BillingCountry AS country,
-        t.TrackId        AS track_id,
-        t.Name           AS track_name,
-        SUM(il.UnitPrice * il.Quantity) AS revenue
+    SELECT 
+        i.BillingCountry,
+        t.TrackId,
+        t.Name AS TrackName,
+        SUM(il.UnitPrice * il.Quantity) AS Revenue
     FROM Invoice i
-    JOIN InvoiceLine il
-      ON il.InvoiceId = i.InvoiceId
-    JOIN Track t
-      ON t.TrackId = il.TrackId
-    GROUP BY i.BillingCountry, t.TrackId, t.Name
+    JOIN InvoiceLine il 
+        ON i.InvoiceId = il.InvoiceId
+    JOIN Track t 
+        ON il.TrackId = t.TrackId
+    GROUP BY i.BillingCountry, t.TrackId
 ),
-ranked AS (
+
+ranked_tracks AS (
     SELECT
-        country,
-        track_id,
-        track_name,
-        revenue,
-        DENSE_RANK() OVER (
-            PARTITION BY country
-            ORDER BY revenue DESC
-        ) AS revenue_rank_in_country
+        BillingCountry,
+        TrackId,
+        TrackName,
+        Revenue,
+        ROW_NUMBER() OVER (
+            PARTITION BY BillingCountry
+            ORDER BY Revenue DESC
+        ) AS Ranking
     FROM track_revenue
 )
-SELECT
-    country,
-    track_id,
-    track_name,
-    revenue,
-    revenue_rank_in_country
-FROM ranked
-WHERE revenue_rank_in_country <= 3
-ORDER BY country, revenue_rank_in_country, track_name;
+
+SELECT *
+FROM ranked_tracks
+WHERE Ranking <= 3
+ORDER BY BillingCountry, Ranking;
 
 --------------------------------------------------------------------------------
 -- 6) Determinar qué clientes conforman el grupo que acumula ~80% de los ingresos
